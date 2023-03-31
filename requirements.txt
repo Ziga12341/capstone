@@ -1,5 +1,13 @@
 # This file may be used to create an environment using:
 # $ conda create --name <env> --file <this file>
 # platform: win-64
-python=3.11
-django=4.1
+django==4.1
+
+# https://www.accordbox.com/blog/how-use-scss-sass-your-django-project-python-way/
+# https://anaconda.org/conda-forge/django_compressor
+# https://anaconda.org/conda-forge/django-libsass
+# installed via conda install -c conda-forge libsass
+# installed via pip install libsass
+django-libsass==0.9
+# installed via pip install django_compressor
+django-compressor==4.3.1
