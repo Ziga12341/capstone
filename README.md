@@ -31,16 +31,9 @@ This is a simple voting app that allows users to vote on a shopping list.
   link to the image of the product
 
 ### Optional features
-- a few different permissions (roles) for users:
+  - a few different permissions (roles) for users:
   - permission to add items
   - permission to delete its own items
   - permission to delete any item
   - permission to see the number of votes on items
   - permission to see who voted on items
-
-```json
-{
-  "a": 1,
-  "b": "Test"
-}
-```

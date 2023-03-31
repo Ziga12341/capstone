@@ -11,3 +11,5 @@ django==4.1
 django-libsass==0.9
 # installed via pip install django_compressor
 django-compressor==4.3.1
+# installed via pip install python-dotenv
+python-dotenv==1.0.0
