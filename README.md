@@ -37,3 +37,71 @@ This is a simple voting app that allows users to vote on a shopping list.
   - permission to delete any item
   - permission to see the number of votes on items
   - permission to see who voted on items
+
+## Model diagram
+
+```mermaid
+erDiagram
+    Suggestions }o--|| User : "suggestion author"
+    Suggestions }o--|| Categorised_list : "has suggestions"
+    Categorised_list }o--|| Category : "list category"
+    Group ||--o{ Categorised_list : "group lists"
+
+    User ||--o{ Group : "group owner"
+    User }|--o{ Group : "group member"
+
+    Suggestions ||--o{ Comment : "has comments"
+
+    User ||--o{ Comment : "comment author"
+    User }o--o{ Suggestions : "user likes"
+    User }o--o{ Suggestions : "user opened suggestion"
+```
+
+## Model diagram
+
+```mermaid
+erDiagram
+    Suggestions }o--|| User : "suggestion author"
+    Suggestions }o--|| Categorised_list : "has suggestions"
+    Categorised_list }o--|| Category : "list category"
+    Group ||--o{ Categorised_list : "group lists"
+
+    User ||--o{ Group : "group owner"
+    User }|--o{ Group : "group member"
+
+    Suggestions ||--o{ Comment : "has comments"
+
+    User ||--o{ Comment : "comment author"
+    User }o--o{ Suggestions : "user likes"
+
+    Suggestions {
+        string name
+        date_time created_at
+    }
+
+    User {
+        url email
+    }
+
+    Categorised_list {
+        date_time created_at
+    }
+
+    Group {
+        string name
+        string description
+        url image
+        date_time created_at
+    }
+
+    Category {
+        string name
+        date_time created_at
+    }
+
+    Comment {
+        string message
+        date_time created_at
+    }
+
+```
