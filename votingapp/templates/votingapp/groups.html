@@ -10,7 +10,7 @@
     </ul>
 {#    create new group#}
     <h1>Create new group</h1>
-    <form action="" method="post">
+    <form action="{% url 'groups' %}" method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="Create group">

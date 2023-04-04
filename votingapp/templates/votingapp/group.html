@@ -4,15 +4,16 @@
     <h1>Categories</h1>
     {% if categories %}
         <ul>
-            {% for category in categories %}
-                <li>{{ category.name }}</li>
+            {% for category in categories_list %}
+                <li>{{ category }}</li>
             {% endfor %}
         </ul>
     {% else %}
         <p>No categories are available.</p>
     {% endif %}
-    form action="" method="post">
+    <form action="{% url 'group' group.id %}" method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="Add Category">
+    </form>
 {% endblock %}
