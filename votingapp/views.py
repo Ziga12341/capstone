@@ -71,24 +71,24 @@ def groups(request):
 # user can create categorised list of this group
 # add category to categorised list of group
 @login_required
-def group(request, group_id):
+def group(request, group_name):
     """
     get group from request like group id
     user see a default categorised list with categories in it from particular group
+    :param group_name:
     :param request:
-    :param group_id:
     :return:
     """
-    group_by_id = Group.objects.get(id=group_id)
+    group_by_name = Group.objects.get(group_name=group_name)
     user = User.objects.get(id=request.user.id)
-    default_categorised_lists = Categorised_list.objects.filter(group=group_by_id)
+    default_categorised_lists = Categorised_list.objects.filter(group=group_by_name)
     list_of_all_categories_from_this_group = [obj.category.category_name for obj in
-                                              Categorised_list.objects.filter(group=group_id) if obj.category is not None]
+                                              Categorised_list.objects.filter(group=group_by_name.id) if obj.category is not None]
 
     print("----------- list_of_all_categories_from_this_group", list_of_all_categories_from_this_group)
     categories = default_categorised_lists
     # if there is any category in this categorised list
-    if user not in group_by_id.members.all():
+    if user not in group_by_name.members.all():
         return JsonResponse({"error": "You can view detailed view of group which you are a member."},
                             status=400)
 
@@ -97,12 +97,52 @@ def group(request, group_id):
         print(category_name)
         category = Category(category_name=category_name)
         category.save()
-        new_categorised_list = Categorised_list(group=group_by_id, category=category)
+        new_categorised_list = Categorised_list(group=group_by_name, category=category)
         new_categorised_list.save()
-        return HttpResponseRedirect(reverse("group", args=(group_by_id.id,)))
+        return HttpResponseRedirect(reverse("group", args=(group_by_name.id,)))
 
     return render(request, "votingapp/group.html", {
-        "group": group_by_id,
+        "group": group_by_name,
+        "user": user,
+        "categories": categories,
+        "form": NewCategoryForm(),
+        "categories_list": list_of_all_categories_from_this_group
+    })
+
+
+def category(request, category_name):
+    """
+    get category from request like category id
+    user see a default categorised list with categories in it from particular group
+    :param category_name:
+    :param request:
+    :return:
+    """
+    category_by_name = Category.objects.get(category_name=category_name)
+    user = User.objects.get(id=request.user.id)
+    default_categorised_lists = Categorised_list.objects.filter(category=category_by_name)
+    list_of_all_categories_from_this_group = [obj.category.category_name for obj in
+                                              Categorised_list.objects.filter(category=category_by_name.id) if
+                                              obj.category is not None]
+
+    print("----------- list_of_all_categories_from_this_group", list_of_all_categories_from_this_group)
+    categories = default_categorised_lists
+    # if there is any category in this categorised list
+    if user not in category_by_name.members.all():
+        return JsonResponse({"error": "You can view detailed view of group which you are a member."},
+                            status=400)
+
+    if request.method == "POST":
+        category_name = request.POST["category_name"]
+        print(category_name)
+        category = Category(category_name=category_name)
+        category.save()
+        new_categorised_list = Categorised_list(group=group_by_name, category=category)
+        new_categorised_list.save()
+        return HttpResponseRedirect(reverse("group", args=(group_by_name.id,)))
+
+    return render(request, "votingapp/group.html", {
+        "group": group_by_name,
         "user": user,
         "categories": categories,
         "form": NewCategoryForm(),

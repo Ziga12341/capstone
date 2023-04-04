@@ -5,7 +5,9 @@
     {% if categories %}
         <ul>
             {% for category in categories_list %}
-                <li>{{ category }}</li>
+{#                link to each category where you can see all suggestions#}
+{#                {% url 'category' category.id %}#}
+                <li><a href="">{{ category }}</a></li>
             {% endfor %}
         </ul>
     {% else %}

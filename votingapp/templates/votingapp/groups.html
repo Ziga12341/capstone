@@ -5,7 +5,7 @@
     <ul>
         <p>You are member of listed groups:</p>
         {% for group in my_groups %}
-            <li><a href="{% url 'group' group.id %}">{{ group.group_name }}</a></li>
+            <li><a href="{% url 'group' group.group_name %}">{{ group.group_name }}</a></li>
         {% endfor %}
     </ul>
 {#    create new group#}

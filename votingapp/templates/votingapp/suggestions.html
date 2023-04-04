@@ -1,0 +1,22 @@
+{% extends "votingapp/layout.html" %}
+
+{% block body %}
+{#    loop through suggestions#}
+    {% for suggestion in suggestions %}
+        <h2>{{ suggestion.title }}</h2>
+        <p>{{ suggestion.description }}</p>
+        <p>Submitted by: {{ suggestion.submitter }}</p>
+        <p>Submitted on: {{ suggestion.submitted_on }}</p>
+        <p>Number of votes: {{ suggestion.votes.count }}</p>
+        <a href="">Vote</a>
+    {% endfor %}
+
+{#    form for create new suggestion#}
+    <form action="{% url 'votingapp:new' %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Create Suggestion">
+    </form>
+
+
+{% endblock %}
