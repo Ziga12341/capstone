@@ -57,6 +57,20 @@ def groups(request):
     })
 
 
+def group(request, group_id):
+    """
+    get group from request like group id
+    :param request:
+    :param group_id:
+    :return:
+    """
+    group_by_id = Group.objects.get(id=group_id)
+    user = User.objects.get(id=request.user.id)
+    return render(request, "votingapp/group.html", {
+        "group": group_by_id,
+        "user": user
+    })
+
 def login_view(request):
     """
     Log user in.
