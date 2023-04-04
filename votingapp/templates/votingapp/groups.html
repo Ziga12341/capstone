@@ -1,0 +1,18 @@
+{% extends "votingapp/layout.html" %}
+
+{% block body %}
+    <h1>My groups</h1>
+    <ul>
+        <p>You are member of listed groups:</p>
+        {% for group in my_groups %}
+            <li><a href="">{{ group.name }}</a></li>
+        {% endfor %}
+    </ul>
+{#    create new group#}
+    <h1>Create new group</h1>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Create group">
+    </form>
+{% endblock %}

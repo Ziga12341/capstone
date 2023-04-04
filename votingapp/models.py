@@ -40,9 +40,9 @@ class Group(models.Model):
     group_image = models.URLField(blank=True, null=True) # optional
     created_at = models.DateTimeField(auto_now_add=True)
     # each group can have many categories, but each category can have only one group - one-to-many relationship
-    categories = models.ForeignKey("Category", blank=True, related_name="groups")
+    categories = models.ForeignKey("Category", blank=True, related_name="groups", on_delete=models.CASCADE)
     owner = models.ForeignKey("User", on_delete=models.CASCADE, null=True, related_name="owner")
-    members = models.ManyToManyField("User", related_name="groups", null=False)
+    members = models.ManyToManyField("User", related_name="group_members", null=False)
 
     def __str__(self):
         return f"{self.group_name}"
