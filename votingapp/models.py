@@ -26,7 +26,7 @@ class User(AbstractUser):
 
 
 class Categorised_list(models.Model):
-    category = models.ForeignKey("Category", on_delete=models.CASCADE, related_name="lists")
+    category = models.ForeignKey("Category", on_delete=models.CASCADE, related_name="lists", null=True, blank=True)
     group = models.ForeignKey("Group", on_delete=models.CASCADE, related_name="lists")
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -40,7 +40,9 @@ class Group(models.Model):
     group_image = models.URLField(blank=True, null=True)  # optional
     created_at = models.DateTimeField(auto_now_add=True)
     # each group can have many categories, but each category can have only one group - one-to-many relationship
-    categories = models.ForeignKey("Category", blank=True, null=True, related_name="groups", on_delete=models.CASCADE)
+    # why Group has categories? You can access categories only through Categorised_list or what?
+    # I removed categories from Group model
+    # categories = models.ForeignKey("Category", blank=True, null=True, related_name="groups", on_delete=models.CASCADE)
     owner = models.ForeignKey("User", on_delete=models.CASCADE, null=True, related_name="owner")
     members = models.ManyToManyField("User", related_name="group_members", null=False)
 

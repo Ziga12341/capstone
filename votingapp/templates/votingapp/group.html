@@ -1,4 +1,18 @@
+{#loop through Categorieded_lists#}
 {% extends "votingapp/layout.html" %}
 {% block body %}
-    TODO
+    <h1>Categories</h1>
+    {% if categories %}
+        <ul>
+            {% for category in categories %}
+                <li>{{ category.name }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No categories are available.</p>
+    {% endif %}
+    form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Add Category">
 {% endblock %}

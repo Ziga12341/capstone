@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
@@ -20,6 +20,11 @@ class NewGroupForm(forms.Form):
     # group_image = forms.URLField(label="Group image", required=False)
 
 
+# Create new category in particular categorised list form
+class NewCategoryForm(forms.Form):
+    category_name = forms.CharField(label="Category name", max_length=64)
+
+
 def index(request):
     return render(request, "votingapp/index.html")
 
@@ -29,6 +34,8 @@ def groups(request):
     """
     get user from request like user id
     user can create new group
+    when you create new group you are automatically owner of this group as well as member
+    when you create new group you get a default categorised list with no categories in it
     :param request:
     :return:
     """
@@ -43,6 +50,8 @@ def groups(request):
             new_group = Group(group_name=group_name, group_description=group_description, owner=user)
             new_group.save()
             new_group.members.add(user)
+            default_categorised_list = Categorised_list(group=new_group, category=None)
+            default_categorised_list.save()
             return HttpResponseRedirect(reverse("groups"))
         else:
             return render(request, "votingapp/groups.html", {
@@ -57,19 +66,44 @@ def groups(request):
     })
 
 
+# user need to be member of group to see group page
+# detailed view of particular group
+# user can create categorised list of this group
+# add category to categorised list of group
+@login_required
 def group(request, group_id):
     """
     get group from request like group id
+    user see a default categorised list with categories in it
     :param request:
     :param group_id:
     :return:
     """
     group_by_id = Group.objects.get(id=group_id)
     user = User.objects.get(id=request.user.id)
+    default_categorised_lists = Categorised_list.objects.get(group=group_by_id)
+    print("----------- group", default_categorised_lists.group)
+    print("----------- category", default_categorised_lists.category)
+    categories = default_categorised_lists.category
+    # if there is any category in this categorised list
+    if user not in group_by_id.members.all():
+        return JsonResponse({"error": "You can view detailed view of group which you are a member."},
+                            status=400)
+
+    if request.method == "POST":
+        category_name = request.POST["category_name"]
+        category = Category.objects.get(category_name=category_name)
+        new_categorised_list = Categorised_list(group=group_by_id, category=category)
+        new_categorised_list.save()
+        return HttpResponseRedirect(reverse("group", args=(group_by_id.id,)))
+
     return render(request, "votingapp/group.html", {
         "group": group_by_id,
-        "user": user
+        "user": user,
+        "categories": categories,
+        "form": NewCategoryForm()
     })
+
 
 def login_view(request):
     """
