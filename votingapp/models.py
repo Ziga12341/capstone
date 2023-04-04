@@ -37,10 +37,10 @@ class Categorised_list(models.Model):
 class Group(models.Model):
     group_name = models.CharField(max_length=64)
     group_description = models.TextField()
-    group_image = models.URLField(blank=True, null=True) # optional
+    group_image = models.URLField(blank=True, null=True)  # optional
     created_at = models.DateTimeField(auto_now_add=True)
     # each group can have many categories, but each category can have only one group - one-to-many relationship
-    categories = models.ForeignKey("Category", blank=True, related_name="groups", on_delete=models.CASCADE)
+    categories = models.ForeignKey("Category", blank=True, null=True, related_name="groups", on_delete=models.CASCADE)
     owner = models.ForeignKey("User", on_delete=models.CASCADE, null=True, related_name="owner")
     members = models.ManyToManyField("User", related_name="group_members", null=False)
 
