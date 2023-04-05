@@ -7,7 +7,7 @@ class Suggestions(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     # user that created the suggestion
     user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="suggestions")
-    likes = models.ManyToManyField("User", null=True, related_name="likes")
+    likes = models.ManyToManyField("User", related_name="likes")
     open_by = models.ManyToManyField("User", blank=True, related_name="opened_suggestions")
     list = models.ForeignKey("Categorised_list", on_delete=models.CASCADE, related_name="suggestions")
 
@@ -44,7 +44,7 @@ class Group(models.Model):
     # I removed categories from Group model
     # categories = models.ForeignKey("Category", blank=True, null=True, related_name="groups", on_delete=models.CASCADE)
     owner = models.ForeignKey("User", on_delete=models.CASCADE, null=True, related_name="owner")
-    members = models.ManyToManyField("User", related_name="group_members", null=False)
+    members = models.ManyToManyField("User", related_name="group_members")
 
     def __str__(self):
         return f"{self.group_name}"

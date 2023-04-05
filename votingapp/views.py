@@ -25,6 +25,11 @@ class NewCategoryForm(forms.Form):
     category_name = forms.CharField(label="Category name", max_length=64)
 
 
+# Create new suggestion in particular categorised list form
+class NewSuggestionForm(forms.Form):
+    suggestion_name = forms.CharField(label="Suggestion name", max_length=64)
+
+
 def index(request):
     return render(request, "votingapp/index.html")
 
@@ -129,27 +134,29 @@ def category(request, group_name, category_name):
     # filter all categories by particular category and get first element not the whole QuerySet
     categorised_list_by_category = categorised_list.filter(category=category)[0]
 
-    print("----------- categorised_list", categorised_list)
     # get all suggestions from particular category
     suggestions_of_this_category = Suggestions.objects.filter(list=categorised_list_by_category)
     print("----------- suggestions_of_this_category", suggestions_of_this_category)
+
+    if user not in group.members.all():
+        return JsonResponse({"error": "You can see categories of groups which you are a member."},
+                            status=400)
 
     # if user not in category_by_name.members.all():
     #     return JsonResponse({"error": "You can view detailed view of group which you are a member."},
     #                         status=400)
 
-    # if request.method == "POST":
-    #     category_name = request.POST["category_name"]
-    #     print(category_name)
-    #     category = Category(category_name=category_name)
-    #     category.save()
-    #     # new_categorised_list = Categorised_list(group=group_by_name, category=category)
-    #     # new_categorised_list.save()
-    #     # return HttpResponseRedirect(reverse("group", args=(group_by_name.id,)))
+    if request.method == "POST":
+        suggestion_name = request.POST["suggestion_name"]
+        print(suggestion_name)
+        new_suggestion = Suggestions(name=suggestion_name, list=categorised_list_by_category, user=user)
+        new_suggestion.save()
+        return HttpResponseRedirect(reverse("category", args=(group.group_name, category.category_name,)))
 
     return render(request, "votingapp/category.html", {
         "user": user,
         "suggestions": suggestions_of_this_category,
+        "form": NewSuggestionForm(),
     })
 
 
