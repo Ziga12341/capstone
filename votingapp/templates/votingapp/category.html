@@ -6,6 +6,7 @@
     <ul>
         {% for suggestion in suggestions %}
             <li>
+{#            {% url 'suggestion' group_name=group.group_name category_name=category suggestion_name=suggestion.name %}#}
                 <a href="">{{ suggestion.name }}</a>
             </li>
         {% endfor %}

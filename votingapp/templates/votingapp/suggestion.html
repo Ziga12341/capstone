@@ -1,0 +1,18 @@
+{#extend layout#}
+{#create block body#}
+{#on block body present suggestion name#}
+{#add form which adds like to suggestion#}
+{##}
+
+{% extends "votingapp/layout.html" %}
+{% block body %}
+    {% if suggestion %}
+        <h1>{{ suggestion.name }}</h1>
+        <form action="/suggestions/{{ suggestion.name }}/like" method="post">
+            <input type="submit" value="Like">
+        </form>
+    {% else %}
+        <h1>No such suggestion</h1>
+    {% endif %}
+
+{% endblock %}

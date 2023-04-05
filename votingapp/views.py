@@ -87,6 +87,7 @@ def group(request, group_name):
     group_by_name = Group.objects.get(group_name=group_name)
     user = User.objects.get(id=request.user.id)
     default_categorised_lists = Categorised_list.objects.filter(group=group_by_name)
+
     list_of_all_categories_from_this_group = [obj.category.category_name for obj in
                                               Categorised_list.objects.filter(group=group_by_name.id) if obj.category is not None]
 
@@ -100,11 +101,16 @@ def group(request, group_name):
     if request.method == "POST":
         category_name = request.POST["category_name"]
         print(category_name)
-        category = Category(category_name=category_name)
-        category.save()
+        # of category already in Category object than get category from Category object
+        if category_name in Category.objects.filter(category_name="food")[0].category_name:
+            category = Category.objects.get(category_name=category_name)
+        # create new category
+        else:
+            category = Category(category_name=category_name)
+            category.save()
         new_categorised_list = Categorised_list(group=group_by_name, category=category)
         new_categorised_list.save()
-        return HttpResponseRedirect(reverse("group", args=(group_by_name.id,)))
+        return HttpResponseRedirect(reverse("group", args=(group_by_name.group_name,)))
 
     return render(request, "votingapp/group.html", {
         "group": group_by_name,
@@ -126,13 +132,13 @@ def category(request, group_name, category_name):
     :param request:
     :return:
     """
-    category = get_object_or_404(Category, category_name=category_name)
+    category = Category.objects.filter(category_name=category_name)
     user = User.objects.get(id=request.user.id)
     group = Group.objects.get(group_name=group_name)
     # get all categories of particular group
-    categorised_list = Categorised_list.objects.filter(group=group)
+    categorised_list = Categorised_list.objects.filter(group=group) # i replaced group.id with group
     # filter all categories by particular category and get first element not the whole QuerySet
-    categorised_list_by_category = categorised_list.filter(category=category)[0]
+    categorised_list_by_category = categorised_list.filter(category=category[0].id)[0]
 
     # get all suggestions from particular category
     suggestions_of_this_category = Suggestions.objects.filter(list=categorised_list_by_category)
@@ -151,7 +157,7 @@ def category(request, group_name, category_name):
         print(suggestion_name)
         new_suggestion = Suggestions(name=suggestion_name, list=categorised_list_by_category, user=user)
         new_suggestion.save()
-        return HttpResponseRedirect(reverse("category", args=(group.group_name, category.category_name,)))
+        return HttpResponseRedirect(reverse("category", args=(group.group_name, category[0].category_name,)))
 
     return render(request, "votingapp/category.html", {
         "user": user,
@@ -159,6 +165,50 @@ def category(request, group_name, category_name):
         "form": NewSuggestionForm(),
     })
 
+def suggestion(request, group_name, category_name, suggestion_name):
+    """
+    get suggestion from request like suggestion id
+    user see a default categorised list with categories in it from particular group
+    :param group_name:
+    :param category_name:
+    :param suggestion_name:
+    :param request:
+    :return:
+    """
+    user = User.objects.get(id=request.user.id)
+    group = Group.objects.get(group_name=group_name)
+    category = Category.objects.get(category_name=category_name)
+    # get all categories of particular group
+    categorised_list = Categorised_list.objects.filter(group=group)
+    # filter all categories by particular category and get first element not the whole QuerySet
+    categorised_list_by_category = categorised_list.filter(category=category)[0]
+
+    # get all suggestions from particular category
+    suggestions_of_this_category = Suggestions.objects.filter(list=categorised_list_by_category)
+    print("----------- suggestions_of_this_category", suggestions_of_this_category)
+    suggestion = suggestions_of_this_category.filter(name=suggestion_name)[0]
+
+    if user not in group.members.all():
+        return JsonResponse({"error": "You can see categories of groups which you are a member."},
+                            status=400)
+
+    # if user not in category_by_name.members.all():
+    #     return JsonResponse({"error": "You can view detailed view of group which you are a member."},
+    #                         status=400)
+
+    if request.method == "POST":
+        suggestion_name = request.POST["suggestion_name"]
+        print(suggestion_name)
+        new_suggestion = Suggestions(name=suggestion_name, list=categorised_list_by_category, user=user)
+        new_suggestion.save()
+        return HttpResponseRedirect(reverse("category", args=(group.group_name, category.category_name,)))
+
+    return render(request, "votingapp/suggestion.html", {
+        "user": user,
+        "suggestions": suggestions_of_this_category,
+        "form": NewSuggestionForm(),
+        "suggestion": suggestion,
+    })
 
 def login_view(request):
     """

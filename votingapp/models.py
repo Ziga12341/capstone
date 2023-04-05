@@ -6,6 +6,7 @@ class Suggestions(models.Model):
     name = models.CharField(max_length=64)
     created_at = models.DateTimeField(auto_now_add=True)
     # user that created the suggestion
+    # user can add url which lead to website with more information about suggestion
     user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="suggestions")
     likes = models.ManyToManyField("User", related_name="likes")
     open_by = models.ManyToManyField("User", blank=True, related_name="opened_suggestions")
