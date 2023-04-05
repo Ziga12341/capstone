@@ -163,6 +163,8 @@ def category(request, group_name, category_name):
         "user": user,
         "suggestions": suggestions_of_this_category,
         "form": NewSuggestionForm(),
+        "group": group,
+        "category": category[0]
     })
 
 def suggestion(request, group_name, category_name, suggestion_name):
