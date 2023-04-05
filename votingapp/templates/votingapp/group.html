@@ -7,7 +7,7 @@
             {% for category in categories_list %}
 {#                link to each category where you can see all suggestions#}
 {#                {% url 'category' category.id %}#}
-                <li><a href="">{{ category }}</a></li>
+                <li><a href="{% url 'category' group_name=group.group_name category_name=category %}">{{ category }}</a></li>
             {% endfor %}
         </ul>
     {% else %}

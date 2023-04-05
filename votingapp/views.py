@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
@@ -110,43 +110,46 @@ def group(request, group_name):
     })
 
 
-def category(request, category_name):
+# user can click on each category where he can see all suggestions and create new suggestion
+# list of all suggestions in particular category
+def category(request, group_name, category_name):
     """
     get category from request like category id
     user see a default categorised list with categories in it from particular group
+    :param group_name:
     :param category_name:
     :param request:
     :return:
     """
-    category_by_name = Category.objects.get(category_name=category_name)
+    category = get_object_or_404(Category, category_name=category_name)
     user = User.objects.get(id=request.user.id)
-    default_categorised_lists = Categorised_list.objects.filter(category=category_by_name)
-    list_of_all_categories_from_this_group = [obj.category.category_name for obj in
-                                              Categorised_list.objects.filter(category=category_by_name.id) if
-                                              obj.category is not None]
+    group = Group.objects.get(group_name=group_name)
+    # get all categories of particular group
+    categorised_list = Categorised_list.objects.filter(group=group)
+    # filter all categories by particular category and get first element not the whole QuerySet
+    categorised_list_by_category = categorised_list.filter(category=category)[0]
 
-    print("----------- list_of_all_categories_from_this_group", list_of_all_categories_from_this_group)
-    categories = default_categorised_lists
-    # if there is any category in this categorised list
-    if user not in category_by_name.members.all():
-        return JsonResponse({"error": "You can view detailed view of group which you are a member."},
-                            status=400)
+    print("----------- categorised_list", categorised_list)
+    # get all suggestions from particular category
+    suggestions_of_this_category = Suggestions.objects.filter(list=categorised_list_by_category)
+    print("----------- suggestions_of_this_category", suggestions_of_this_category)
 
-    if request.method == "POST":
-        category_name = request.POST["category_name"]
-        print(category_name)
-        category = Category(category_name=category_name)
-        category.save()
-        new_categorised_list = Categorised_list(group=group_by_name, category=category)
-        new_categorised_list.save()
-        return HttpResponseRedirect(reverse("group", args=(group_by_name.id,)))
+    # if user not in category_by_name.members.all():
+    #     return JsonResponse({"error": "You can view detailed view of group which you are a member."},
+    #                         status=400)
 
-    return render(request, "votingapp/group.html", {
-        "group": group_by_name,
+    # if request.method == "POST":
+    #     category_name = request.POST["category_name"]
+    #     print(category_name)
+    #     category = Category(category_name=category_name)
+    #     category.save()
+    #     # new_categorised_list = Categorised_list(group=group_by_name, category=category)
+    #     # new_categorised_list.save()
+    #     # return HttpResponseRedirect(reverse("group", args=(group_by_name.id,)))
+
+    return render(request, "votingapp/category.html", {
         "user": user,
-        "categories": categories,
-        "form": NewCategoryForm(),
-        "categories_list": list_of_all_categories_from_this_group
+        "suggestions": suggestions_of_this_category,
     })
 
 

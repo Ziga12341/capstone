@@ -1,0 +1,18 @@
+{% extends "votingapp/layout.html" %}
+
+{% block body %}
+{#    list of all suggestions#}
+    <h1> Suggestions </h1>
+    <ul>
+        {% for suggestion in suggestions %}
+            <li>
+                <a href="">{{ suggestion.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <h2> Add a new suggestion </h2>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Add suggestion">
+{% endblock %}
