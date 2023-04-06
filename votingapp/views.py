@@ -167,6 +167,10 @@ def category(request, group_name, category_name):
         "category": category[0]
     })
 
+
+# present all votes of particular suggestion
+# present all users that count on this suggestion
+# count how many users count on this suggestion
 def suggestion(request, group_name, category_name, suggestion_name):
     """
     get suggestion from request like suggestion id
@@ -188,6 +192,7 @@ def suggestion(request, group_name, category_name, suggestion_name):
     # get all suggestions from particular category
     suggestions_of_this_category = Suggestions.objects.filter(list=categorised_list_by_category)
     print("----------- suggestions_of_this_category", suggestions_of_this_category)
+
     suggestion = suggestions_of_this_category.filter(name=suggestion_name)[0]
 
     if user not in group.members.all():
@@ -210,7 +215,49 @@ def suggestion(request, group_name, category_name, suggestion_name):
         "suggestions": suggestions_of_this_category,
         "form": NewSuggestionForm(),
         "suggestion": suggestion,
+        "group": group,
+        "category": category,
+        "number_of_voters": suggestion.voters.count(),
     })
+
+
+@login_required(login_url='/login')
+def vote(request, group_name, category_name, suggestion_name):
+    """
+    get suggestion from request like suggestion name
+    :param group_name:
+    :param category_name:
+    :param suggestion_name:
+    :param request:
+    :return:
+    """
+    user = User.objects.get(id=request.user.id)
+    group = Group.objects.get(group_name=group_name)
+    category = Category.objects.get(category_name=category_name)
+    # get all categories of particular group
+    categorised_list = Categorised_list.objects.filter(group=group)
+    # filter all categories by particular category and get first element not the whole QuerySet
+    categorised_list_by_category = categorised_list.filter(category=category)[0]
+
+    # get all suggestions from particular category
+    suggestions_of_this_category = Suggestions.objects.filter(list=categorised_list_by_category)
+    print("----------- suggestions_of_this_category", suggestions_of_this_category)
+    suggestion = suggestions_of_this_category.filter(name=suggestion_name)[0]
+
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+
+    if user not in group.members.all():
+        return JsonResponse({"error": "You can see categories of groups which you are a member."},
+                            status=400)
+    # if user already voted for this suggestion
+    if user in suggestion.voters.all():
+        print("user already liked posts")
+    else:
+        suggestion.voters.add(user)
+        suggestion.save()
+    return HttpResponseRedirect(reverse("suggestion", args=(group.group_name, category.category_name, suggestion.name,)))
+
 
 def login_view(request):
     """

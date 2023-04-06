@@ -8,11 +8,14 @@
 {% block body %}
     {% if suggestion %}
         <h1>{{ suggestion.name }}</h1>
-        <form action="/suggestions/{{ suggestion.name }}/like" method="post">
-            <input type="submit" value="Like">
+        <form action="{% url 'vote' group.group_name category suggestion.name %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="Vote">
         </form>
     {% else %}
         <h1>No such suggestion</h1>
     {% endif %}
+
+    <div>{{ number_of_voters }} Votes</div>
 
 {% endblock %}

@@ -10,4 +10,5 @@ urlpatterns = [
     path("group/<str:group_name>", views.group, name="group"),
     path("group/<str:group_name>/<str:category_name>", views.category, name="category"),
     path("group/<str:group_name>/<str:category_name>/<str:suggestion_name>", views.suggestion, name="suggestion"),
+    path("group/<str:group_name>/<str:category_name>/<str:suggestion_name>/vote", views.vote, name="vote"),
 ]
