@@ -30,11 +30,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'capstone.dev.razum.si',
+    'localhost',
+    '127.0.0.1',
     # Add any other domains required here
 ]
-
 CSRF_COOKIE_DOMAIN = '.razum.si'
-CSRF_TRUSTED_ORIGINS = ['capstone.dev.razum.si']
+CSRF_TRUSTED_ORIGINS = ['http://capstone.dev.razum.si', 'https://capstone.dev.razum.si']
 
 # Application definition
 
