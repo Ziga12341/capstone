@@ -33,6 +33,8 @@ ALLOWED_HOSTS = [
     # Add any other domains required here
 ]
 
+CSRF_COOKIE_DOMAIN = '.razum.si'
+CSRF_TRUSTED_ORIGINS = ['capstone.dev.razum.si']
 
 # Application definition
 
