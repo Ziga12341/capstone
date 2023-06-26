@@ -2,8 +2,8 @@
 
 {% block body %}
     <h1>My groups</h1>
+    <p>You are member of listed groups:</p>
     <ul>
-        <p>You are member of listed groups:</p>
         {% for group in my_groups %}
             <li><a href="{% url 'group' group.group_name %}">{{ group.group_name }}</a></li>
         {% endfor %}

@@ -6,9 +6,10 @@
 
 {% extends "votingapp/layout.html" %}
 {% block body %}
+    <p>test</p>
     {% if suggestion %}
         <h1>{{ suggestion.name }}</h1>
-        <form action="{% url 'vote' group.group_name category suggestion.name %}" method="post">
+        <form class="test d-none" action="{% url 'vote' group.group_name category suggestion.name %}" method="post">
             {% csrf_token %}
             <input type="submit" value="Vote">
         </form>
@@ -17,5 +18,22 @@
     {% endif %}
 
     <div>{{ number_of_voters }} Votes</div>
+{##}
+{#    {% if comments %}#}
+{#        <h2>Comments</h2>#}
+{#        <ul>#}
+{#            {% for comment in comments %}#}
+{#                <li>{{ comment.comment }}</li>#}
+{#            {% endfor %}#}
+{#        </ul>#}
+{#    {% endif %}#}
+{##}
+{#    {% if user.is_authenticated %}#}
+{#        <form action="{% url 'comment' group.group_name category suggestion.name %}" method="post">#}
+{#            {% csrf_token %}#}
+{#            <input type="text" name="comment">#}
+{#            <input type="submit" value="Add Comment">#}
+{#        </form>#}
+{#    {% endif %}#}
 
 {% endblock %}
