@@ -11,7 +11,8 @@ WORKDIR /app
 
 # Install dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Add these lines to create the /data directory and set permissions
 RUN mkdir /data && \
@@ -19,14 +20,15 @@ RUN mkdir /data && \
 
 # Copy the project files
 COPY . .
+
+# Run Django migrations
+RUN python manage.py makemigrations votingapp && \
+    python manage.py migrate
+
 # Expose the port your app is running on
 EXPOSE 8000
 
 # Run the Django app
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-CMD ["pip", "install", "--upgrade", "pip"]
-CMD ["pip", "install", "-r", "requirements.txt"]
-CMD ["python", "manage.py", "makemigrations", "votingapp"]
-CMD ["python", "manage.py", "migrate"]
 
 # End
