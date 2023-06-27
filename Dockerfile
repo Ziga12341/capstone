@@ -28,3 +28,5 @@ CMD ["pip", "install", "--upgrade", "pip"]
 CMD ["pip", "install", "-r", "requirements.txt"]
 CMD ["python", "manage.py", "makemigrations", "votingapp"]
 CMD ["python", "manage.py", "migrate"]
+
+# End
