@@ -24,7 +24,3 @@ EXPOSE 8000
 
 # Run the Django app
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-CMD ["pip", "install", "--upgrade", "pip"]
-CMD ["pip", "install", "-r", "requirements.txt"]
-CMD ["python", "manage.py", "makemigrations", "capstone"]
-CMD ["python", "manage.py", "migrate"]
